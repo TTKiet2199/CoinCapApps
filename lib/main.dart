@@ -1,9 +1,26 @@
+import 'dart:convert';
+
+import 'package:coincapapp/models/app_config.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:get_it/get_it.dart';
 
-import 'home_page.dart';
+import 'pages/home_page.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await loadConfig();
   runApp(const MyApp());
+}
+
+Future<void> loadConfig() async {
+  String configContent = await rootBundle.loadString('assets/config/main.json');
+  Map configData = jsonDecode(configContent);
+  GetIt.instance.registerSingleton<AppConfig>(
+    AppConfig(
+      COIN_API_BASE_URL: configData['COIN_API_BASE_URL'],
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
